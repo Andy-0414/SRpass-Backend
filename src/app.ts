@@ -52,6 +52,18 @@ app.post("/get-information", async (req: Request, res: Response) => {
 	});
 });
 
+app.post("/check-inspection", async (req: Request, res: Response) => {
+	let data = {
+		qstnCrtfcNoEncpt: String(req.body.qstnCrtfcNoEncpt), // 학생 자가진단 고유 코드
+		temp: Number(req.body.temp), // 발열 유무 1: 발열 0: 발열 없음
+	};
+	// TODO: 자가진단 로직 구현
+	res.status(200).send({
+		result: true,
+		message: "테스트",
+	});
+});
+
 const server = app.listen(port, () => {
 	Log.i(`PORT : ${port}`);
 });
