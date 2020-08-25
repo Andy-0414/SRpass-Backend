@@ -5,6 +5,7 @@ import compression from "compression";
 import morgan from "morgan";
 
 import axios from "axios";
+import cherrio from "cheerio";
 
 import "dotenv/config";
 import Log from "./module/Log";
@@ -57,6 +58,21 @@ app.post("/check-inspection", async (req: Request, res: Response) => {
 		qstnCrtfcNoEncpt: String(req.body.qstnCrtfcNoEncpt), // 학생 자가진단 고유 코드
 		temp: Number(req.body.temp), // 발열 유무 1: 발열 0: 발열 없음
 	};
+	// 온도값이 없을경우 해당 코드 유효성 검사
+	if (isNaN(data.temp)) {
+		let html = (await axios.get("https://eduro.sen.go.kr/stv_cvd_co00_000.do?k=MO%2F%2BwR%2BiOXhi98WMDL%2FJfw%3D%3D")).data;
+		let result = String(cherrio(html).find("#rtnRsltCode").val());
+		if (result != "SUCCESS")
+			return res.status(200).send({
+				result: false,
+				message: "잘못된 요청입니다.",
+			});
+		return res.status(200).send({
+			result: true,
+			message: "유효한 코드입니다.",
+		});
+	}
+
 	// TODO: 자가진단 로직 구현
 	res.status(200).send({
 		result: true,
