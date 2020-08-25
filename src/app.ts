@@ -60,7 +60,7 @@ app.post("/check-inspection", async (req: Request, res: Response) => {
 	};
 	// 온도값이 없을경우 해당 코드 유효성 검사
 	if (isNaN(data.temp)) {
-		let html = (await axios.get("https://eduro.sen.go.kr/stv_cvd_co00_000.do?k=MO%2F%2BwR%2BiOXhi98WMDL%2FJfw%3D%3D")).data;
+		let html = (await axios.get(`https://eduro.sen.go.kr/stv_cvd_co00_000.do?k=${data.qstnCrtfcNoEncpt}`)).data;
 		let result = String(cherrio(html).find("#rtnRsltCode").val());
 		if (result != "SUCCESS")
 			return res.status(200).send({
