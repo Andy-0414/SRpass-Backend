@@ -48,7 +48,7 @@ app.post("/get-information", async (req: Request, res: Response) => {
 	// 성공
 	return res.status(200).send({
 		result: true,
-		data,
+		response,
 		message: "성공",
 	});
 });
@@ -72,11 +72,33 @@ app.post("/check-inspection", async (req: Request, res: Response) => {
 			message: "유효한 코드입니다.",
 		});
 	}
+	let co01form = new URLSearchParams();
+	co01form.append("rtnRsltCode", "SUCCESS");
+	co01form.append("qstnCrtfcNoEncpt", data.qstnCrtfcNoEncpt);
+	co01form.append("rspns01", "1");
+	co01form.append("rspns02", "1");
+	co01form.append("rspns07", "0");
+	co01form.append("rspns08", "0");
+	co01form.append("rspns09", "0");
+	let co01 = (await axios.post("https://eduro.sen.go.kr/stv_cvd_co01_000.do", co01form)).data.resultSVO.data;
+
+	let co02form = new URLSearchParams();
+	co02form.append("rtnRsltCode", "SUCCESS");
+	co02form.append("qstnCrtfcNoEncpt", data.qstnCrtfcNoEncpt);
+	co02form.append("schulNm", co01.schulNm);
+	co02form.append("stdntName", co01.stdntName);
+	co02form.append("rspns01", "1");
+	co02form.append("rspns02", "1");
+	co02form.append("rspns07", "0");
+	co02form.append("rspns08", "0");
+	co02form.append("rspns09", "0");
+
+	let co02 = (await axios.post("https://eduro.sen.go.kr/stv_cvd_co02_000.do", co02form)).data;
 
 	// TODO: 자가진단 로직 구현
 	res.status(200).send({
 		result: true,
-		message: "테스트",
+		message: "성공",
 	});
 });
 
